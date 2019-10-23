@@ -1,0 +1,99 @@
+player {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 32px;
+    color: wheat;
+    text-shadow: none;
+    grid-template-columns: 16px auto 12px 1fr 16px;
+    -webkit-user-drag: none;
+    user-select: none; 
+
+    .player__controls {
+        grid-column: 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .player__button {
+            padding: 4px;
+            border-radius: 50%;
+            transition: all .125s;
+            cursor: pointer;
+
+            &:hover {
+                color: white;
+                text-shadow: 0 0 .8rem white;
+            }
+        }
+    }
+
+    .player__title {
+        grid-column: 4;
+    }
+
+    .player__track {
+        z-index: 5;
+        cursor: pointer;
+        display: inline-flex;
+        grid-column: 4;
+        width: 100%;
+        height: 22px;
+        justify-content: center;
+        align-items: center;
+
+        .player__trackbar {
+            position: relative;
+            background: gray;
+            height: 2px;
+            width: 100%;
+
+            .player__progress {
+                height: 2px;
+                background: rgb(229, 62, 255);
+            }
+
+            .player__trackhandle {
+                pointer-events: none;
+                opacity: 0;
+                transition: opacity .25s;
+                top: -3px;
+                margin-left: -4px;
+                left: 100%;
+                position: absolute;
+                height: 8px;
+                width: 8px;
+                border-radius: 50%;
+                background: rgb(229, 62, 255);
+            }
+
+            .player__ctime,
+            .player__resttime {
+                pointer-events: none;
+                position: absolute;
+            }
+            .player__ctime {
+                left: 0;
+            }
+            .player__resttime {
+                right: 0;
+            }
+
+            .player__prevtime {
+                pointer-events: none;
+                position: absolute;
+                opacity: 0;
+                transition: opacity .25s;
+                top: -1.25rem;
+            }
+        }
+    }
+    &:hover{
+        .player__track {
+            .player__trackhandle {
+                opacity: 1;
+            }
+        }
+    }
+}

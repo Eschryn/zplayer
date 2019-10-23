@@ -1,0 +1,61 @@
+<html>
+    <head>
+        <link href="style.css" rel="stylesheet"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://kit.fontawesome.com/a354efa92c.js" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <div class="fll">
+            <!--<div class="blr-bg"></div>-->
+            <div class="rest">
+                <h1>web player test</h1>
+                <player file="./Night Tempo - Babymaker 2/Night Tempo - Babymaker 2 - 01 Magic.mp3">
+                    <div class="player__title">Select a track from the list below.</div>
+                    <div class="player__controls">
+                        <div class="player__button" role="button">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <div class="player__track">
+                        <div class="player__trackbar">
+                            <div class="player__prevtime" role="text">0:00</div>
+                            <div class="player__progress" role="progressbar"></div>
+                            <div class="player__trackhandle" role="button"></div>
+                            <div class="player__ctime" role="text">0:00</div>
+                            <div class="player__resttime" role="text">0:00</div>
+                        </div>
+                    </div>
+                </player>
+                <div class="playlist">
+                    <div id="test">Sector M</div>
+                    <div id="test2">Triangular Toaster</div>
+                    <div id="test3">Three Four To The Door</div>
+                    <div id="test4">SOUPBASS</div>
+                </div>
+                <h2>Night Tempo - Babymaker 2</h2>
+                <div class="playlist">
+                    <div id="t1">Magic</div>
+                    <div id="t2">Stay Pure</div>
+                    <div id="t3">Cheek</div>
+                    <div id="t4">Universe</div>
+                    <div id="t5">Touch</div>
+                    <div id="t6">In The Moon</div>
+                    <div id="t7">2 Late</div>
+                    <div id="t8">Dreamy</div>
+                    <div id="t9">Holiday!</div>
+                    <div id="t10">Heart Break</div>
+                </div>
+                <div class="cntr-cntnt">
+                    <article>
+                        <i>
+                            <p>Will fallback to HTMLAudioElement on Mozilla</p>
+                            <p>On Chrome an user action such as a click is required to create an AudioContext so there is no autoplay</p>
+                            <p>The tracks from the artist Night Tempo are from the album baby maker, which is released by the artist under following terms: https://creativecommons.org/licenses/by-nc-nd/3.0/ <br>bandcamp: https://nighttempo.bandcamp.com/album/babymaker-2</p>
+                        </i>
+                    </article>
+                </div>
+            </div>
+        </div>
+        <script id="zplayer" src="zplayer/ZPlayer.js"></script>
+    </body>
+</html>
