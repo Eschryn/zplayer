@@ -1,10 +1,10 @@
-enum SeekOrigin {
+export enum SeekOrigin {
     Begin,
     Current,
     End
 }
 
-class BinaryReader {
+export class BinaryReader {
     protected dv: DataView;
     protected pos: number;
 

@@ -1,3 +1,5 @@
+import { HTMLSinglePlayer } from './HTMLSinglePlayer.js';
+
 function CreatePlayer(elem: HTMLElement): HTMLSinglePlayer {
     return new HTMLSinglePlayer(elem);
 }

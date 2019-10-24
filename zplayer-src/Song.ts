@@ -1,5 +1,7 @@
+import { BinaryStreamReader } from "./BinaryStreamReader.js";
+import { BinaryReader } from "./BinaryReader.js";
 
-class Song {
+export class Song {
     private title: string | undefined;
     private artist: string | undefined;
     private originalArtist: string | undefined;
@@ -12,10 +14,31 @@ class Song {
     private start_time: string | undefined;
     private end_time: string | undefined;
 
-    constructor(reader: BinaryReader | BinaryStreamReader) {
+    private constructor() {
+
+    }
+
+    public static FromReader(reader: BinaryReader): Song {
+        let song = new Song();
+
         if (reader.ReadString(3) == "ID3") {
-            this.ReadTAGv2(reader);
+            song.ReadTAGv2(reader);
         }
+
+        return song;
+        //reader.Seek(SeekOrigin.End, 512);
+        /*if (reader.ReadString(3) == "TAG")
+            this.ReadTag(reader);*/
+    }
+
+    public static async FromReaderAsync(reader: BinaryStreamReader): Promise<Song> {
+        let song = new Song();
+
+        if (await reader.ReadStringAsync(3) == "ID3") {
+            await song.ReadTAGv2Async(reader);
+        }
+
+        return song;
         //reader.Seek(SeekOrigin.End, 512);
         /*if (reader.ReadString(3) == "TAG")
             this.ReadTag(reader);*/
@@ -23,11 +46,11 @@ class Song {
 
     public static FromURI(URI: string): Song {
         return Req.ArrayBuffer(Path.Append(Path.BaseURI, URI), (e) => {
-            return new Song(new BinaryReader(e));
+            return this.FromReader(new BinaryReader(e));
         });
     }
 
-    private ReadEnhancedTag(reader: BinaryReader | BinaryStreamReader) {
+    private ReadEnhancedTag(reader: BinaryReader) {
         this.title = reader.ReadString(60);
         this.artist = reader.ReadString(60);
         this.album = reader.ReadString(60);
@@ -37,7 +60,7 @@ class Song {
         this.end_time = reader.ReadString(6);
     }
 
-    private ReadTAGv1(reader: BinaryReader | BinaryStreamReader) {
+    private ReadTAGv1(reader: BinaryReader) {
         if (!this.title)
             this.title = reader.ReadString(30);
 
@@ -63,7 +86,7 @@ class Song {
             this.genre = reader.ReadByte() as Genre;
     }
 
-    private ReadFrame(reader: BinaryReader | BinaryStreamReader) {
+    private ReadFrame(reader: BinaryReader) {
         let identifier = reader.ReadString(4);
         let size = reader.ReadUInt() - 1;
         reader.ReadUShort();
@@ -97,7 +120,8 @@ class Song {
         }
     }
 
-    private ReadTAGv2(reader: BinaryReader | BinaryStreamReader) {
+    private ReadTAGv2(reader: BinaryReader) {
+        console.log("OK");
         let v = reader.ReadBytes(2);
         console.log(`version: ${v[0]}.${v[1]}`);
         reader.ReadByte();
@@ -108,6 +132,56 @@ class Song {
         }
         while (reader.Position <= size + 10) {
             this.ReadFrame(reader);
+        }
+    }
+    
+    private async ReadFrameAsync(reader: BinaryStreamReader) {
+        let identifier = await reader.ReadStringAsync(4);
+        let size = await reader.ReadUIntAsync() - 1;
+        await reader.ReadUShortAsync();
+        await reader.ReadByteAsync();
+
+        switch (identifier) {
+            case "TRCK":
+                this.track = await reader.ReadStringAsync(size);
+                break;
+            case "TOPE":
+                this.originalArtist = await reader.ReadStringAsync(size);
+                break;
+            case "TCON":
+                this.genre = await reader.ReadStringAsync(size);
+                break;
+            case "COMM":
+                this.comment = await reader.ReadStringAsync(size);
+                break;
+            case "TYER":
+                this.year = await reader.ReadStringAsync(size);
+                break;
+            case "TALB":
+                this.album = await reader.ReadStringAsync(size);
+                break;
+            case "TPE1":
+                this.artist = await reader.ReadStringAsync(size);
+                break;
+            case "TIT2":
+                this.title = await reader.ReadStringAsync(size);
+                break;
+        }
+    }
+
+    private async ReadTAGv2Async(reader: BinaryStreamReader) {
+        console.log("OK");
+        let v = await reader.ReadBytesAsync(2);
+        console.log(`version: ${v[0]}.${v[1]}`);
+        await reader.ReadByteAsync();
+
+        let sizeRAW = await reader.ReadUIntAsync();
+        let size = 0;
+        for (let i = 0; i < 4; i++) {
+            size |= ((sizeRAW & 0x7F << (i * 7)) >> i);
+        }
+        while (reader.Position <= size + 10) {
+            this.ReadFrameAsync(reader);
         }
     }
 

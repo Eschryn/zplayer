@@ -1,4 +1,7 @@
-class HTMLSinglePlayer {
+import { BinaryStreamReader } from "./BinaryStreamReader.js";
+import { Song } from "./Song.js";
+
+export class HTMLSinglePlayer {
     private audio: HTMLAudioElement;
     private root: HTMLElement;
     private currentSong: Song | undefined;
@@ -32,7 +35,9 @@ class HTMLSinglePlayer {
             .then(body => {
                 if (body != null) {
                     let reader = new BinaryStreamReader(body);
-                    this.currentSong = new Song(reader);
+
+                    Song.FromReaderAsync(reader)
+                        .then(song => this.currentSong = song);
                 }
             })
         /*Req.ArrayBuffer(Path.Append(Path.BaseURI), (e) => {

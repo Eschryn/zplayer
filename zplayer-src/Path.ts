@@ -1,6 +1,9 @@
 class Path {
     static get BaseURI(): string {
-        return document.baseURI;
+        if (document != null) 
+            return document.baseURI as string;
+
+        return "";
     }
 
     public static Append(Path: string, File: string) {
