@@ -44,11 +44,20 @@ export class HTTPResponseStream extends Stream {
     }    
 
     public Write(data: ArrayBuffer, offset: number, length: number): void {
-        throw new Error("Cannot write to HTTPResponseStream.");
+        let req = new XMLHttpRequest();
+        req.open("PUT", this.url.href, false);
+        req.setRequestHeader("Range", `bytes=${offset}-${offset + length - 1}`);
+        req.send(data);
     }
 
-    public WriteAsync(data: ArrayBuffer, offset: number, length: number): Promise<void> {
-        throw new Error("Cannot write to HTTPResponseStream.");
+    public async WriteAsync(data: ArrayBuffer, offset: number, length: number): Promise<void> {
+        await fetch(this.url.href, {
+            method: 'PUT',
+            headers: {
+                'Range': `bytes=${offset}-${offset + length}`
+            },
+            body: data
+        });
     }
 
     public Read(offset: number, length: number): ArrayBuffer {
