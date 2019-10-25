@@ -1,5 +1,4 @@
-import { Observable } from 'rxjs';
-import { BinaryReader } from './BinaryReader.js';
+/*import { Observable } from "https://dev.jspm.io/rxjs@6/_esm2015/index.js";
 
 enum TextMode {
     UTF32BE,
@@ -10,20 +9,20 @@ enum TextMode {
     Default
 }
 
-export class BinaryStreamReader extends BinaryReader {
+export class BinaryStreamReader {
     private stream: ReadableStream;
     private locked: boolean = true;
+    private reader: ReadableStreamDefaultReader<any>;
 
     constructor(buff: ReadableStream) {
         super(new ArrayBuffer(0));
-        this.FetchData();
         this.stream = buff;
+        this.reader = buff.getReader();
     }
 
     async FetchData() {
-        let val = await this.stream.getReader().read();
+        let val = await this.reader.read();
         let res = val.value as Uint8Array;
-        console.log(res);
         this.dv = new DataView(res.buffer);
         this.locked = false;
     }
@@ -34,15 +33,12 @@ export class BinaryStreamReader extends BinaryReader {
             throw Error("Stream End");
         if (this.locked) {
             await this.FetchData();
-
-            if (this.locked)
-                throw Error("Unkown Exception while fetching data");
         }
         return this.dv;
     }
 
     public async ReadByteAsync(): Promise<number> {
-        return this.DV().then(x => x.getUint32(this.pos++));
+        return this.DV().then(x => x.getUint8(this.pos++));
     }
 
     public async ReadSByteAsync(): Promise<number> {
@@ -145,11 +141,11 @@ export class BinaryStreamReader extends BinaryReader {
                         mode = TextMode.UTF8;
                         detectTextMode = false;
                         return;
-                    case [0xFE, 0xFF]:
+                    case [0xFE, 0xFF, 0xAA, 0xAA]:
                         mode = TextMode.UTF16LE;
                         detectTextMode = false;
                         return;
-                    case [0xFF, 0xFE]:
+                    case [0xFF, 0xFE, 0xAA, 0xAA]:
                         mode = TextMode.UTF16BE;
                         return;
                     case [0x00, 0x00, 0xFE, 0xFF]:
@@ -167,6 +163,11 @@ export class BinaryStreamReader extends BinaryReader {
 
                             detectTextMode = false;
                         }
+                        if (!(v == 0xFF && v == 0xFE && v == 0x00 && v == 0xBF) && byteMarkPointer == 1)
+                        {
+                            detectTextMode = false;
+                            break;
+                        }
                         return;
                 }
             }
@@ -174,4 +175,4 @@ export class BinaryStreamReader extends BinaryReader {
             string += processCharacter(mode, v);
         }).then(() => string);
     }
-}
+}*/

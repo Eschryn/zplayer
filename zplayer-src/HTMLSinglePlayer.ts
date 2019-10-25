@@ -1,5 +1,9 @@
-import { BinaryStreamReader } from "./BinaryStreamReader.js";
+//import { BinaryStreamReader } from "./BinaryStreamReader.js";
 import { Song } from "./Song.js";
+import { TimeStamp } from "./TimeStamp.js";
+import { BinaryReader } from "./stream-api/BinaryReader.js";
+import { HTTPResponseStream } from "./stream-api/HTTPResponseStream.js";
+import { BufferedStream } from "./stream-api/BufferedStream.js";
 
 export class HTMLSinglePlayer {
     private audio: HTMLAudioElement;
@@ -11,6 +15,8 @@ export class HTMLSinglePlayer {
     private source: MediaElementAudioSourceNode | undefined;
     private context: AudioContext | undefined;
     private filter: BiquadFilterNode | undefined;
+
+    private onFinshed: Event;
 
     get Paused(): boolean {
         return this.audio.paused;
@@ -27,36 +33,41 @@ export class HTMLSinglePlayer {
     set File(value: string) {
         if (!this.audioInitialized)
             this.InitAudio();
-        this.file = value;
+
         (this.audio as HTMLAudioElement).src = value;
 
-        fetch(value)
-            .then(response => response.body)
-            .then(body => {
-                if (body != null) {
-                    let reader = new BinaryStreamReader(body);
+        if (this.file == value)
+            return;
 
-                    Song.FromReaderAsync(reader)
-                        .then(song => this.currentSong = song);
-                }
-            })
-        /*Req.ArrayBuffer(Path.Append(Path.BaseURI), (e) => {
-            let reader = new BinaryReader(e);
-            this.currentSong = new Song(reader);
+        let stream = new BufferedStream(
+            new HTTPResponseStream(
+                new URL(
+                    value, 
+                    document.baseURI != null ? document.baseURI : undefined
+                )
+            )
+        );
+        let reader = new BinaryReader(stream);
+
+        this.currentSong = Song.FromReader(reader);
+
+        if (this.currentSong !== undefined) {
             let titles = this.root.getElementsByClassName("player__title") as HTMLCollectionOf<HTMLDivElement>;
-            if (Song !== undefined) {
-                let song = this.currentSong as Song;
-                if (titles.length > 0) {
-                    if (song.Title !== undefined)
-                        if (song.Artist !== undefined)
-                            titles[0].innerText = `${song.Artist} - ${song.Title}`;
-                        else
-                            titles[0].innerText = song.Title;
+            let song = this.currentSong as Song;
+            if (titles.length > 0) {
+                if (song.Title !== undefined)
+                    if (song.Artist !== undefined)
+                        titles[0].innerText = `${song.Artist} - ${song.Title}`;
                     else
-                        titles[0].innerText = (this.audio as HTMLAudioElement).src;
-                }
+                        titles[0].innerText = song.Title;
+                else
+                    titles[0].innerText = (this.audio as HTMLAudioElement).src;
             }
-        });*/
+        }
+
+        stream.Close();
+
+        this.file = value;
     }
 
     public InitAudio() {
@@ -81,10 +92,16 @@ export class HTMLSinglePlayer {
     }
 
     constructor(elem: HTMLElement) {
+        this.onFinshed = new Event("finished");
         this.root = elem;
         this.audio = new Audio();
         this.Bind();
-        this.file = "";
+
+        let attr = elem.getAttribute("file");
+        if (attr !== null)
+            this.file = attr;
+        else
+            this.file = "";
     }
 
     public Play(file?: string | null) {

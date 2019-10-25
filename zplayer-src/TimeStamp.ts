@@ -1,4 +1,4 @@
-class TimeStamp {
+export class TimeStamp {
     private ms: number | undefined;
     private s: number | undefined;
     private m: number | undefined;
