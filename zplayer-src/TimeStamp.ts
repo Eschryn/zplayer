@@ -44,10 +44,10 @@ export class TimeStamp {
     }
 
     public ToString(ms: boolean): string {
-        return (this.h ? this.Hours.toLocaleString("arab", { minimumIntegerDigits: 2 }) + ":" : "")
-            + this.Minutes.toLocaleString("arab", { minimumIntegerDigits: 1 })
-            + ":" + this.Seconds.toLocaleString("arab", { minimumIntegerDigits: 2 })
-            + (ms ? ":" + this.Milliseconds.toLocaleString("arab", { minimumIntegerDigits: 2 }) : "");
+        return (this.h ? this.Hours.toLocaleString("en-US-k-arab", { minimumIntegerDigits: 2 }) + ":" : "")
+            + this.Minutes.toLocaleString("en-US-k-arab", { minimumIntegerDigits: 1 })
+            + ":" + this.Seconds.toLocaleString("en-US-k-arab", { minimumIntegerDigits: 2 })
+            + (ms ? ":" + this.Milliseconds.toLocaleString("en-US-k-arab", { minimumIntegerDigits: 2 }) : "");
     }
 
     public static FromSeconds(s: number) {
