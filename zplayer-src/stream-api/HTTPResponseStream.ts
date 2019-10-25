@@ -4,8 +4,38 @@ export class HTTPResponseStream extends Stream {
     readonly url: URL;
 
     public constructor(url: URL) {
-        super(true, false, true);
+        let req = new XMLHttpRequest();
+        req.open("OPTIONS", url.href, false);
+        req.send();
 
+        let writable = false;
+        let readable = true;
+        let length = 0;
+
+        // ensure correct read write permissions 
+        let allow = req.getResponseHeader("Access-Control-Allow-Methods");
+        if (allow != null) {
+            let res = allow.split(',');
+            res.forEach(x => x = x.trim());
+
+            writable = res.includes("PUT");
+            readable = res.includes("GET");
+
+            // load complete length
+            if (res.includes("HEAD")) {
+                let req = new XMLHttpRequest();
+                req.open("HEAD", url.href, false);
+                req.send();
+
+                let len = req.getResponseHeader("Content-Length");
+                if (len != null)
+                    length = Number.parseInt(len);
+            }
+        }
+
+        super(readable, writable, readable || writable);
+
+        this.length = length;
         this.url = url;
     }
 
