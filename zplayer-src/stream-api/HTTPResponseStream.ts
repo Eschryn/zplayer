@@ -14,6 +14,10 @@ export class HTTPResponseStream extends Stream {
 
         // ensure correct read write permissions 
         let allow = req.getResponseHeader("Access-Control-Allow-Methods");
+
+        if (allow == null)
+            allow = req.getResponseHeader("Allow");
+
         if (allow != null) {
             let res = allow.split(',');
             res.forEach(x => x = x.trim());
