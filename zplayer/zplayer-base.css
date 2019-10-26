@@ -18,6 +18,7 @@ player {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
+  position: relative;
 }
 
 player .player__controls {
@@ -53,6 +54,7 @@ player .player__title {
 }
 
 player .player__track {
+  position: relative;
   z-index: 5;
   cursor: pointer;
   display: -webkit-inline-box;
@@ -65,6 +67,7 @@ player .player__track {
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+  margin: 12px 0px;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
@@ -74,26 +77,32 @@ player .player__track .player__trackbar {
   position: relative;
   background: gray;
   height: 2px;
+  -webkit-transition: all .125s;
+  transition: all .125s;
   width: 100%;
+  border-radius: 64px;
 }
 
 player .player__track .player__trackbar .player__progress {
   height: 2px;
+  -webkit-transition: height .125s;
+  transition: height .125s;
   background: #e53eff;
+  border-radius: 16px;
 }
 
 player .player__track .player__trackbar .player__trackhandle {
   pointer-events: none;
   opacity: 0;
-  -webkit-transition: opacity .25s;
-  transition: opacity .25s;
+  -webkit-transition: opacity .25s, width .25s, height .25s, border-radius .25s;
+  transition: opacity .25s, width .25s, height .25s, border-radius .25s;
   top: -3px;
   margin-left: -4px;
   left: 100%;
   position: absolute;
   height: 8px;
   width: 8px;
-  border-radius: 50%;
+  border-radius: 100%;
   background: #e53eff;
 }
 
@@ -122,5 +131,21 @@ player .player__track .player__trackbar .player__prevtime {
 
 player:hover .player__track .player__trackhandle {
   opacity: 1;
+}
+
+player:hover .player__track .player__trackbar {
+  height: 4px;
+}
+
+player:hover .player__track .player__trackbar .player__progress {
+  height: 4px;
+}
+
+player:hover .player__track .player__trackbar .player__trackhandle {
+  top: -4px;
+  margin-left: -6px;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
 }
 /*# sourceMappingURL=zplayer-base.css.map */
