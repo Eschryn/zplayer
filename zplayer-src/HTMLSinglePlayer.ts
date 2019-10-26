@@ -172,7 +172,7 @@ export class HTMLSinglePlayer {
                 ctime[0].innerHTML = stamp.ToString(false);
             }
             this.ActOnElements("player__resttime", (eve) => {
-                let stamp = TimeStamp.FromSeconds(this.audio.duration - this.audio.currentTime);
+                let stamp = TimeStamp.FromSeconds(this.audio.duration);
                 eve.innerHTML = stamp.ToString(false);
             });
         };
@@ -267,7 +267,7 @@ export class HTMLSinglePlayer {
                     eve.style.opacity = 1 + "";
                 });
                 e.onpointermove = (ev) => {
-                    let p = ev.offsetX / e.offsetWidth;
+                    let p = Math.min(Math.max(ev.offsetX / e.offsetWidth, 0), 1);
                     newtime = this.audio.duration * p;
                     let bars = e.getElementsByClassName("player__progress") as HTMLCollectionOf<HTMLDivElement>;
                     let prevtime = this.root.getElementsByClassName("player__prevtime") as HTMLCollectionOf<HTMLDivElement>;
